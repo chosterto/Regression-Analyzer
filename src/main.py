@@ -4,8 +4,10 @@ from matrixtools import Matrix
 import csv
 
 with open('input\\inputData.csv') as f:
-    inputs = [list(map(float, i)) for i in list(csv.reader(f))[1:]]
-    n = len(inputs)
+    inputs = list(csv.reader(f))
+    degree = int(*inputs[1])
+    points = [list(map(float, i)) for i in inputs[3:]]
+    n = len(points)
     f.close()
 
 
@@ -19,12 +21,11 @@ def f(x, order, coeffs):
 
 def main():
     # WARNING... insufficient number of points may not produce a graph
-    degree = 2
     x_max = float('-inf')
     x_min = float('inf')
     y_vector = Matrix([], n, 1)
     X_matrix = Matrix([], n, degree + 1)
-    for x, y in inputs:
+    for x, y in points:
         if x > x_max:
             x_max = x
         if x < x_min:
@@ -59,7 +60,7 @@ def main():
     plt.plot(x, f(x, degree, coe))
 
     # Plot points
-    plt.scatter(*list(zip(*inputs)))
+    plt.scatter(*list(zip(*points)))
 
     # Show plot
     plt.show()
