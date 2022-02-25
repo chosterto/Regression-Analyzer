@@ -5,8 +5,7 @@ import csv
 
 with open('input\\inputData.csv') as f:
     inputs = list(csv.reader(f))
-    degree = int(*inputs[1])
-    points = [list(map(float, i)) for i in inputs[3:]]
+    points = [list(map(float, i)) for i in inputs[1:]]
     n = len(points)
     f.close()
 
@@ -21,6 +20,7 @@ def f(x, order, coeffs):
 
 def main():
     # WARNING... insufficient number of points may not produce a graph
+    degree = int(input('Polynomial model order? '))
     x_max = float('-inf')
     x_min = float('inf')
     y_vector = Matrix([], n, 1)
