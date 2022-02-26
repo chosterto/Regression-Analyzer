@@ -23,7 +23,33 @@ class Matrix:
     def __str__(self):
         return f'{self.matrix}'
 
-    # Matrix Multiplication
+    # Adding matrices
+    def __add__(self, other: Matrix) -> Matrix:
+        if self.rows != other.rows or self.cols != other.cols:
+            return Matrix([], 0, 0)
+
+        matrix_sum = [
+            [self.matrix[i][j] + other.matrix[i][j] 
+            for j in range(self.cols)] 
+            for i in range(self.rows)]
+
+        return Matrix(matrix_sum, self.rows, self.cols)
+
+
+    # Subtracting matrices
+    def __sub__(self, other: Matrix) -> Matrix:
+        if self.rows != other.rows or self.cols != other.cols:
+            return Matrix([], 0, 0)
+
+        matrix_diff = [
+            [self.matrix[i][j] - other.matrix[i][j] 
+            for j in range(self.cols)] 
+            for i in range(self.rows)]
+
+        return Matrix(matrix_diff, self.rows, self.cols)
+        
+
+    # Multiplying matrices
     def __mul__(self, other: Matrix) -> Matrix:
         C = []
         n = self.rows

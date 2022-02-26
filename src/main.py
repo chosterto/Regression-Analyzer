@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matrixtools import Matrix
+from math import log
 import csv
 
 with open('input\\inputData.csv') as csvf:
@@ -19,29 +20,36 @@ def f(x: float, order: int, coeffs: list):
 
 
 def main():
-    # WARNING... due to how matrices work, an 
-    # insufficient number of points may not produce a graph
-    degree = int(input('Polynomial model order? '))
-    x_max = float('-inf')
-    x_min = float('inf')
-    y_vector = Matrix([], n, 1)
-    X_matrix = Matrix([], n, degree + 1)
-    for x, y in points:
-        if x > x_max:
-            x_max = x
-        if x < x_min:
-            x_min = x
-        y_vector.add_row([y])
-        X_matrix.add_row([1.0] + [x ** i for i in range(1, degree + 1)])
-    
-    # p_vector contains the approximate coefficients of the polynomial
-    p_vector = ((X_matrix.transpose() * X_matrix).inverse() * X_matrix.transpose()) * y_vector
-    coe = sum(p_vector.matrix, [])[::-1]
+    BIC_min = float('inf')
+    best_model = 1
+    ps = []
+    k = 0
+    while k < 12:
+        k += 1
+        y_vector = Matrix([], n, 1)
+        X_matrix = Matrix([], n, k + 1)
+        for x, y in points:
+            y_vector.add_row([y])
+            X_matrix.add_row([1.0] + [x ** i for i in range(1, k + 1)])
+        
+        # p_vector contains the approximate coefficients of the polynomial
+        p_vector = ((X_matrix.transpose() * X_matrix).inverse() * X_matrix.transpose()) * y_vector
+        ps.append(p_vector)
+        # Residual (error) sum of squares
+        RSS = ((y_vector.transpose() * y_vector) - (y_vector.transpose() * (X_matrix * p_vector))).matrix[0][0]
+        if RSS < 0:
+            break
+        # Bayes information criterion
+        BIC_k = n * log(RSS) + (k + 2) * log(n)
+        if BIC_k < BIC_min:
+            BIC_min = BIC_k
+            best_model = k
+
+    coe = sum(ps[best_model - 1].matrix, [])[::-1]
 
     # Print out results
-    print('Polynomial model order =', degree, end='\n\n')
-    print('f(x) = ' + ' + '.join(f'{chr(97 + i)}*x^{degree - i}' for i in range(degree + 1)), end='\n\n')
-    for i in range(degree + 1):
+    print('f(x) = ' + ' + '.join(f'{chr(97 + i)}*x^{best_model - i}' for i in range(best_model + 1)), end='\n\n')
+    for i in range(best_model + 1):
         print(f'{chr(97 + i)} = {coe[i]}')
 
     # GRAPHING
@@ -54,13 +62,14 @@ def main():
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
 
-    x = np.linspace(x_min, x_max, 100)
+    x, y = list(zip(*points))
+    x_line = np.linspace(min(x), max(x), 100)
 
     # Plot line
-    plt.plot(x, f(x, degree, coe))
+    plt.plot(x_line, f(x_line, best_model, coe))
 
     # Plot points
-    plt.scatter(*list(zip(*points)))
+    plt.scatter(x, y)
 
     # Show plot
     plt.show()
