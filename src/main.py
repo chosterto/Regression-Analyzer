@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 from matrixtools import Matrix
 import csv
 
-with open('input\\inputData.csv') as f:
-    inputs = list(csv.reader(f))
+with open('input\\inputData.csv') as csvf:
+    inputs = list(csv.reader(csvf))
     points = [list(map(float, i)) for i in inputs[1:]]
     n = len(points)
-    f.close()
+    csvf.close()
 
 
-def f(x, order, coeffs):
+def f(x: float, order: int, coeffs: list):
     y = 0
     for coeff in coeffs:
         y += coeff * (x ** order)
@@ -19,7 +19,8 @@ def f(x, order, coeffs):
 
 
 def main():
-    # WARNING... insufficient number of points may not produce a graph
+    # WARNING... due to how matrices work, an 
+    # insufficient number of points may not produce a graph
     degree = int(input('Polynomial model order? '))
     x_max = float('-inf')
     x_min = float('inf')
@@ -33,8 +34,7 @@ def main():
         y_vector.add_row([y])
         X_matrix.add_row([1.0] + [x ** i for i in range(1, degree + 1)])
     
-    # p_vector contains the approximate coefficients of the polynomial 
-    # that best models a set of points
+    # p_vector contains the approximate coefficients of the polynomial
     p_vector = ((X_matrix.transpose() * X_matrix).inverse() * X_matrix.transpose()) * y_vector
     coe = sum(p_vector.matrix, [])[::-1]
 
