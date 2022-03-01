@@ -20,6 +20,10 @@ def f(x: float, order: int, coeffs: list):
 
 
 def main():
+    # You must have at least two points
+    if n < 2:
+        return
+
     BIC_min = float('inf')
     best_model = 1
     ps = []
@@ -37,7 +41,7 @@ def main():
         ps.append(p_vector)
         # Residual (error) sum of squares
         RSS = ((y_vector.transpose() * y_vector) - (y_vector.transpose() * (X_matrix * p_vector))).matrix[0][0]
-        if RSS < 0:
+        if RSS <= 0.0:
             break
         # Bayes information criterion
         BIC_k = n * log(RSS) + (k + 2) * log(n)
