@@ -5,7 +5,7 @@ from matrixtools import Matrix
 from math import log
 import csv
 
-path = str(Path(__file__).resolve().parent)[:-3] + 'input\\inputData.csv'
+path = Path(__file__).resolve().parent.parent/'input\\inputData.csv'
 with open(path, 'r') as csvf:
     inputs = list(csv.reader(csvf))
     points = [list(map(float, i)) for i in inputs[1:]]
