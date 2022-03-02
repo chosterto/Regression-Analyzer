@@ -1,10 +1,12 @@
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from matrixtools import Matrix
 from math import log
 import csv
 
-with open('input\\inputData.csv') as csvf:
+path = str(Path(__file__).resolve().parent)[:-3] + 'input\\inputData.csv'
+with open(path, 'r') as csvf:
     inputs = list(csv.reader(csvf))
     points = [list(map(float, i)) for i in inputs[1:]]
     n = len(points)
